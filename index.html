@@ -3,89 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ফারুক টেলিকম </title>
-    <link href="https://i.postimg.cc/FsDNB8yP/704672199-122093864799345609-8083509277657488331-n.jpg" rel="stylesheet">
+    <title>ফারুক টেলিকম</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Hind Siliguri', sans-serif; background: #f8f9fa; color: #333; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f8f9fa; color: #333; scroll-behavior: smooth; }
 
-        /* Header */
         header { background: #1a1a2e; color: white; padding: 50px 10%; text-align: center; }
         .logo { font-size: 45px; font-weight: 700; color: #e67e22; margin-bottom: 10px; }
         header p { font-size: 1.2em; opacity: 0.8; }
 
-        /* Search Bar */
-        .search-box { text-align: center; padding: 20px 10%; background: #f8f9fa; }
-        #searchInput { width: 100%; max-width: 400px; padding: 12px 20px; border-radius: 30px; border: 2px solid #e67e22; outline: none; font-size: 1em; }
+        .notice-bar { background: #e67e22; color: white; padding: 8px 10%; font-weight: 600; font-size: 0.95em; text-align: center; overflow: hidden; }
 
-        /* Categories */
-        .categories { text-align: center; padding: 20px 10%; background: #fff; border-bottom: 2px solid #eee; display: flex; justify-content: center; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; }
-        .cat-btn { padding: 10px 25px; margin: 5px; border: 2px solid #e67e22; background: #fff; cursor: pointer; border-radius: 30px; font-weight: 600; transition: 0.3s; }
+        .shop-photo { text-align: center; padding: 30px 10%; background: #fff; }
+        .shop-photo img { width: 100%; max-width: 600px; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
+        .shop-photo img:hover { transform: scale(1.02); }
+
+        .search-box { text-align: center; padding: 25px 10%; background: #f8f9fa; }
+        .search-wrapper { position: relative; width: 100%; max-width: 400px; margin: 0 auto; }
+        #searchInput { width: 100%; padding: 12px 45px 12px 20px; border-radius: 30px; border: 2px solid #e67e22; outline: none; font-size: 1em; font-family: inherit; }
+        .clear-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; font-size: 18px; cursor: pointer; display: none; }
+
+        .categories { text-align: center; padding: 15px 10%; background: #fff; border-bottom: 2px solid #eee; display: flex; justify-content: center; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .cat-btn { padding: 8px 25px; margin: 5px; border: 2px solid #e67e22; background: #fff; cursor: pointer; border-radius: 30px; font-weight: 600; font-family: inherit; transition: 0.3s; }
         .cat-btn:hover, .cat-btn.active { background: #e67e22; color: white; }
 
-        /* Products */
-        .container { padding: 50px 10%; }
+        .container { padding: 40px 10%; min-height: 400px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.08); text-align: center; transition: 0.3s; }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+        .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center; transition: 0.3s; display: block; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); }
         
-        .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 15px; }
+        .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 15px; background: #f9f9f9; height: 230px; display: flex; align-items: center; justify-content: center; }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s ease-in-out; }
+        .card:hover img { transform: scale(1.1); }
         
-        .card img { width: 100%; height: 250px; object-fit: contain; background: #f9f9f9; transition: transform 0.5s ease; }
-        .card:hover img { transform: scale(1.08); }
+        .card h3 { margin: 15px 0 10px; font-size: 1.25em; color: #2c3e50; }
+        .price { color: #d35400; font-size: 1.3em; font-weight: bold; margin-bottom: 5px; }
         
-        .card h3 { margin: 15px 0; font-size: 1.3em; }
-        .price { color: #d35400; font-size: 1.4em; font-weight: bold; margin-bottom: 15px; }
+        .stock-status { font-size: 0.9em; font-weight: 600; margin-bottom: 15px; }
+        .in-stock { color: #27ae60; }
+        .out-of-stock { color: #c0392b; }
         
-        /* Order Button inside Card */
-        .order-btn { display: block; background: #25d366; color: white; padding: 10px; border-radius: 10px; text-decoration: none; font-weight: 600; margin-top: 10px; }
+        .order-btn { display: block; background: #25d366; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 600; margin-top: 10px; transition: 0.3s; }
+        .order-btn:hover { background: #1ebd58; }
 
-        /* Professional Footer */
+        #noProductMessage { display: none; text-align: center; font-size: 1.2em; color: #7f8c8d; padding: 40px 0; width: 100%; grid-column: 1 / -1; }
+
+        .about-section { padding: 50px 10%; background: #fff; text-align: center; border-top: 1px solid #eee; }
+        .about-section h2 { margin-bottom: 15px; color: #1a1a2e; font-size: 22px; }
+        .about-section p { max-width: 800px; margin: 0 auto; line-height: 1.8; color: #555; font-size: 1.1em; }
+
+        .floating-buttons { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
+        .float-btn { color: white; width: 55px; height: 55px; border-radius: 50px; text-align: center; line-height: 55px; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-decoration: none; transition: 0.3s; border: none; cursor: pointer; }
+        .float-wa { background: #25d366; font-size: 28px; line-height: 55px; }
+        .float-wa:hover { transform: scale(1.08); background: #1ebd58; }
+        .float-top { background: #e67e22; font-weight: bold; display: none; }
+        .float-top:hover { transform: scale(1.08); background: #d35400; }
+        
         footer { background: #1a1a2e; color: #fff; padding: 60px 10% 30px; text-align: center; border-top: 5px solid #e67e22; }
         .footer-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 50px; margin-bottom: 40px; }
         .footer-box { max-width: 300px; }
-        .footer-box h3 { color: #e67e22; margin-bottom: 15px; }
+        .footer-box h3 { color: #e67e22; margin-bottom: 15px; font-size: 1.3em; }
+        .footer-box p { opacity: 0.9; line-height: 1.6; }
+        .call-link { display: inline-block; color: #e67e22; text-decoration: none; margin-top: 5px; font-weight: bold; }
         .btn-wa { display: inline-block; background: #25d366; color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1.1em; transition: 0.3s; }
+        .btn-wa:hover { background: #1ebd58; }
 
-        .float-wa { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50px; text-align: center; line-height: 60px; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; }
-        
-      .shop-photo {
-            text-align: center;
-            padding: 30px 10%;
-            background: #fff;
-        }
-
-        .shop-photo img {
-            width: 100%;
-            max-width: 600px;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: transform 0.5s ease;
-        }
-
-        .shop-photo img:hover {
-            transform: scale(1.02);
-        }
-
-        .about-section {
-            padding: 20px 10% 50px 10%;
-            background: #fff;
-            text-align: center;
-        }
-
-        .about-section h2 {
-            margin-bottom: 15px;
-            color: #1a1a2e;
-        }
-        
-        .about-section p {
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-            color: #555;
-            font-size: 1.1em;
+        @media (max-width: 768px) {
+            header { padding: 30px 5%; }
+            .logo { font-size: 32px; }
+            .container, .about-section, .shop-photo { padding: 30px 5%; }
+            .footer-content { gap: 30px; }
+            .floating-buttons { bottom: 20px; right: 20px; gap: 10px; }
+            .float-btn { width: 48px; height: 48px; line-height: 48px; font-size: 20px; }
+            .float-wa { font-size: 24px; line-height: 48px; }
         }
     </style>
 </head>
@@ -96,54 +90,69 @@
         <p>সারা বাংলাদেশের নির্ভরযোগ্য পাইকারি মোবাইল এক্সেসরিজ শপ</p>
     </header>
 
+    <div class="notice-bar">
+        <marquee behavior="scroll" direction="left" scrollamount="5"> ঈদ মোবারক ।</marquee>
+    </div>
+
     <div class="shop-photo">
-        <img src="https://i.postimg.cc/FsDNB8yP/704672199-122093864799345609-8083509277657488331-n.jpg" alt="ফারুক টেলিকম দোকান">
+        <img src="https://i.postimg.cc/wB0H6y58/Whats-App-Image-2026-05-21-at-4-04-39-PM-(2).jpg" alt="ফারুক টেলিকম দোকান">
     </div>
 
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="পণ্য সার্চ করুন..." onkeyup="searchProducts()">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="পণ্য সার্চ করুন..." onkeyup="handleSearchSearch()">
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+        </div>
     </div>
 
     <div class="categories">
-        <button class="cat-btn active" onclick="filterProducts('all', this)">সব পণ্য</button>
-        <button class="cat-btn" onclick="filterProducts('charger', this)">চার্জার</button>
-        <button class="cat-btn" onclick="filterProducts('battery', this)">ব্যাটারি</button>
-        <button class="cat-btn" onclick="filterProducts('display', this)">ডিসপ্লে</button>
+        <button class="cat-btn active" onclick="filterCategory('all', this)">সব পণ্য</button>
+        <button class="cat-btn" onclick="filterCategory('charger', this)">চার্জার</button>
+        <button class="cat-btn" onclick="filterCategory('battery', this)">ব্যাটারি</button>
+        <button class="cat-btn" onclick="filterCategory('display', this)">ডিসপ্লে</button>
     </div>
 
     <div class="container">
         <div class="product-grid" id="productGrid">
             
-            <div class="card" data-category="charger" data-name="2.1a android fast charger">
-                <div class="image-gallery"><img src="https://i.postimg.cc/Y9wHBHS1/download-24.jpg" alt="Charger"></div>
+            <div class="card" data-category="charger" data-name="2.1a android fast charger চার্জার ফাস্ট">
+                <div class="image-gallery"><img src="https://i.postimg.cc/Y9wHBHS1/download-24.jpg" alt="2.1A Android Fast Charger"></div>
                 <h3>2.1A Android Fast Charger</h3>
                 <div class="price">পাইকারি মূল্য: ২০০ টাকা</div>
+                <div class="stock-status in-stock">✔ স্টকে আছে</div>
                 <a href="https://wa.me/8801670669591?text=আমি 2.1A Android Fast Charger টি অর্ডার করতে চাই।" class="order-btn" target="_blank">অর্ডার করতে ক্লিক করুন</a>
             </div>
 
-            <div class="card" data-category="battery" data-name="অরিজিনাল long life ব্যাটারি">
-                <div class="image-gallery"><img src="https://i.postimg.cc/g0hK69H3/images-(8).jpg" alt="Battery"></div>
+            <div class="card" data-category="battery" data-name="অরিজিনাল long life ব্যাটারি battery">
+                <div class="image-gallery"><img src="https://i.postimg.cc/g0hK69H3/images-(8).jpg" alt="অরিজিনাল Long life ব্যাটারি"></div>
                 <h3>অরিজিনাল Long life ব্যাটারি</h3>
                 <div class="price">মূল্য: ৪৫০ টাকা</div>
+                <div class="stock-status in-stock">✔ স্টকে আছে</div>
                 <a href="https://wa.me/8801670669591?text=আমি অরিজিনাল Long life ব্যাটারি টি অর্ডার করতে চাই।" class="order-btn" target="_blank">অর্ডার করতে ক্লিক করুন</a>
             </div>
 
-            <div class="card" data-category="display" data-name="অরিজিনাল crown ডিসপ্লে">
-                <div class="image-gallery"><img src="https://i.postimg.cc/HkgMPJwy/images-(9).jpg" alt="Display"></div>
+            <div class="card" data-category="display" data-name="অরিজিনাল crown ডিসপ্লে display">
+                <div class="image-gallery"><img src="https://i.postimg.cc/HkgMPJwy/images-(9).jpg" alt="অরিজিনাল crown ডিসপ্লে"></div>
                 <h3>অরিজিনাল crown ডিসপ্লে</h3>
                 <div class="price">মূল্য: ১২০০ টাকা</div>
+                <div class="stock-status out-of-stock">✖ স্টক শেষ</div>
                 <a href="https://wa.me/8801670669591?text=আমি অরিজিনাল crown ডিসপ্লে টি অর্ডার করতে চাই।" class="order-btn" target="_blank">অর্ডার করতে ক্লিক করুন</a>
             </div>
+
+            <div id="noProductMessage">আপনার সার্চকৃত পণ্যটি খুঁজে পাওয়া যায়নি।</div>
 
         </div>
     </div>
 
     <div class="about-section">
         <h2>আমাদের সম্পর্কে</h2>
-        <p>ফারুক টেলিকম বিগত ১২ বছরেরও বেশি সময় ধরে সততা ও নিষ্ঠার সাথে পাইকারি মোবাইল এক্সেসরিজ ব্যবসা পরিচালনা করে আসছে। নির্ভরযোগ্য সেবা এবং অরিজিনাল পণ্য নিশ্চিত করাই আমাদের ব্যবসার মূল লক্ষ্য। আপনাদের আস্থা ও ভালোবাসাই আমাদের পথচলার শক্তি।</p>
+        <p>ফারুক টেলিকম বিগত ১২ বছরেরও বেশি সময় ধরে সততা ও নিষ্ঠার সাথে পাইকারি মোবাইল এক্সেসরিজ ব্যবসা পরিচালনা করে আসছে। নির্ভরযোগ্য সেবা এবং অরিজিনাল পণ্য নিশ্চিত করাই আমাদের ব্যবসার মূল লক্ষ্য। আপনাদের আস্থা ও ভালোবাসাই আমাদের পথচলার শক্তি।</p>
     </div>
 
-    <a href="https://wa.me/8801670669591" class="float-wa" target="_blank">💬</a>
+    <div class="floating-buttons">
+        <button onclick="scrollToTop()" class="float-btn float-top" id="scrollTopBtn" title="উপরে যান">▲</button>
+        <a href="https://wa.me/8801670669591" class="float-btn float-wa" target="_blank" aria-label="WhatsApp Chat">💬</a>
+    </div>
 
     <footer>
         <h2 style="margin-bottom: 30px;">যোগাযোগের তথ্য</h2>
@@ -154,8 +163,8 @@
             </div>
             <div class="footer-box">
                 <h3>ফোন নম্বর</h3>
-                <p style="font-size: 1.4em; font-weight: bold;">01670669591</p>
-                <a href="tel:01670669591" style="color: #fff;">সরাসরি কল করুন</a>
+                <p style="font-size: 1.4em; font-weight: bold; letter-spacing: 1px;">01670669591</p>
+                <a href="tel:01670669591" class="call-link">সরাসরি কল করুন</a>
             </div>
         </div>
         <a href="https://wa.me/8801670669591" class="btn-wa" target="_blank">WhatsApp এ মেসেজ করুন</a>
@@ -163,30 +172,72 @@
     </footer>
 
     <script>
-        function filterProducts(category, btn) {
+        let currentCategory = 'all';
+
+        function filterCategory(category, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                if (category === 'all' || card.getAttribute('data-category') === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            
+            currentCategory = category;
+            updateGallery();
         }
 
-        function searchProducts() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.querySelectorAll('.card');
+        function handleSearchSearch() {
+            const searchInput = document.getElementById('searchInput').value;
+            const clearBtn = document.getElementById('clearBtn');
+            
+            if (searchInput.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            updateGallery();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearBtn').style.display = 'none';
+            updateGallery();
+        }
+
+        function updateGallery() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+            const noMessage = document.getElementById('noProductMessage');
+
             cards.forEach(card => {
-                let name = card.getAttribute('data-name');
-                if (name.includes(input)) {
+                const cardCategory = card.getAttribute('data-category');
+                const cardName = card.getAttribute('data-name').toLowerCase();
+
+                const matchesCategory = (currentCategory === 'all' || cardCategory === currentCategory);
+                const matchesSearch = cardName.includes(searchInput);
+
+                if (matchesCategory && matchesSearch) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            let visibleCount = Array.from(cards).filter(card => card.style.display === 'block').length;
+            if (visibleCount === 0) {
+                noMessage.style.display = 'block';
+            } else {
+                noMessage.style.display = 'none';
+            }
+        }
+
+        window.onscroll = function() {
+            const topBtn = document.getElementById("scrollTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                topBtn.style.display = "block";
+            } else {
+                topBtn.style.display = "none";
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
     </script>
 </body>
