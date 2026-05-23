@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ফারুক টেলিকম</title>
+    
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/6QZB4DbQ/Untitled-design.png">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,8 +15,23 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Hind Siliguri', sans-serif; background: #f8f9fa; color: #333; scroll-behavior: smooth; }
 
-        header { background: #1a1a2e; color: white; padding: 50px 10%; text-align: center; }
-        .logo { font-size: 45px; font-weight: 700; color: #e67e22; margin-bottom: 10px; }
+        header { background: #1a1a2e; color: white; padding: 40px 10%; text-align: center; }
+        
+        /* গোল এবং ছোট লোগোর জন্য স্টাইল */
+        .header-logo-container {
+            margin-bottom: 10px;
+        }
+        .logo-img { 
+            width: 70px;         /* লোগোটি ছোট রাখার জন্য সাইজ */
+            height: 70px;        /* উচ্চতা ও প্রস্থ সমান রাখা হয়েছে */
+            object-fit: cover;
+            border-radius: 50%;  /* লোগোটি একদম গোল করার জন্য */
+            border: 2px solid #e67e22; /* গোল লোগোর চারপাশে একটি সুন্দর বর্ডার */
+            display: inline-block;
+        }
+
+        /* আগের মতো ফারুক টেলিকম লেখার স্টাইল */
+        .logo-text { font-size: 45px; font-weight: 700; color: #e67e22; margin-bottom: 10px; }
         header p { font-size: 1.2em; opacity: 0.8; }
 
         .notice-bar { background: #e67e22; color: white; padding: 8px 10%; font-weight: 600; font-size: 0.95em; text-align: center; overflow: hidden; }
@@ -74,7 +92,8 @@
 
         @media (max-width: 768px) {
             header { padding: 30px 5%; }
-            .logo { font-size: 32px; }
+            .logo-text { font-size: 32px; } /* মোবাইলে লেখা কিছুটা ছোট হবে */
+            .logo-img { width: 55px; height: 55px; } /* মোবাইলে লোগো আরেকটু ছোট হবে */
             .container, .about-section, .shop-photo { padding: 30px 5%; }
             .footer-content { gap: 30px; }
             .floating-buttons { bottom: 20px; right: 20px; gap: 10px; }
@@ -86,7 +105,10 @@
 <body>
 
     <header>
-        <div class="logo">ফারুক টেলিকম</div>
+        <div class="header-logo-container">
+            <img src="https://i.postimg.cc/6QZB4DbQ/Untitled-design.png" alt="ফারুক টেলিকম লোগো" class="logo-img">
+        </div>
+        <div class="logo-text">ফারুক টেলিকম</div>
         <p>সারা বাংলাদেশের নির্ভরযোগ্য পাইকারি মোবাইল এক্সেসরিজ শপ</p>
     </header>
 
@@ -126,7 +148,7 @@
             <div class="card" data-category="battery" data-name="অরিজিনাল long life ব্যাটারি battery">
                 <div class="image-gallery"><img src="https://i.postimg.cc/g0hK69H3/images-(8).jpg" alt="অরিজিনাল Long life ব্যাটারি"></div>
                 <h3>অরিজিনাল Long life ব্যাটারি</h3>
-                <div class="price">মূল্য: ৪৫০ টাকা</div>
+                <div class="price">মূল্য: ৪ ১৫০ টাকা</div>
                 <div class="stock-status in-stock">✔ স্টকে আছে</div>
                 <a href="https://wa.me/8801670669591?text=আমি অরিজিনাল Long life ব্যাটারি টি অর্ডার করতে চাই।" class="order-btn" target="_blank">অর্ডার করতে ক্লিক করুন</a>
             </div>
