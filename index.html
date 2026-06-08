@@ -80,24 +80,24 @@
         .card:hover img { transform: scale(1.08); }
         
         .card h3 { margin: 15px 0 10px; font-size: 1.25em; color: #2c3e50; }
-        .price { color: #d35400; font-size: 1.3em; font-weight: bold; margin-bottom: 5px; }
         
-        .stock-status { font-size: 0.9em; font-weight: 600; margin-bottom: 15px; }
-        .in-stock { color: #27ae60; }
-        .out-of-stock { color: #c0392b; }
-        
-        .order-btn { display: block; background: #25d366; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 600; margin-top: 10px; transition: 0.3s; }
-        .order-btn:hover { background: #1ebd58; animation: order-wiggle 0.5s ease-in-out infinite alternate; }
-        @keyframes order-wiggle {
-            0% { transform: rotate(-1deg); }
-            100% { transform: rotate(1deg); }
-        }
+        .delete-btn { display: none; background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-top: 10px; font-family: inherit; font-weight: bold; width: 100%; }
+        .delete-btn:hover { background: #e74c3c; }
 
         #noProductMessage { display: none; text-align: center; font-size: 1.2em; color: #7f8c8d; padding: 40px 0; width: 100%; grid-column: 1 / -1; }
 
         .about-section { padding: 10px 10%; background: #fff; text-align: center; border-top: 1px solid #eee; }
         .about-section h2 { margin-bottom: 15px; color: #1a1a2e; font-size: 22px; }
         .about-section p { max-width: 800px; margin: 0 auto; line-height: 1.8; color: #555; font-size: 1.1em; }
+
+        .admin-panel-box { display: none; background: #fff; border: 2px dashed #e67e22; border-radius: 15px; padding: 25px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; text-align: left; }
+        .admin-panel-box h3 { color: #1a1a2e; margin-bottom: 15px; border-bottom: 2px solid #e67e22; padding-bottom: 5px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; }
+        .submit-btn { background: #e67e22; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: inherit; font-size: 1.1em; }
+        .submit-btn:hover { background: #d35400; }
+        .logout-btn { background: #7f8c8d; margin-top: 10px; }
 
         .floating-buttons { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
         .float-btn { color: white; width: 55px; height: 55px; border-radius: 50px; text-align: center; line-height: 55px; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-decoration: none; transition: 0.3s; border: none; cursor: pointer; }
@@ -249,15 +249,41 @@
             <img src="https://i.postimg.cc/6QZB4DbQ/Untitled-design.png" alt="ফারুক টেলিকম লোগো" class="logo-img">
         </div>
         <div class="logo-text">ফারুক টেলিকম</div>
-        <p>সারা বাংলাদেশের নির্ভরযোগ্য পাইকারি মোবাইল এক্সেসরিজ শপ</p>
+        <p>সারা বাংলাদেশের নির্ভরযোগ্য পাইকারি mobile এক্সেসরিজ শপ</p>
     </header>
 
     <div class="notice-bar">
-        <marquee behavior="scroll" direction="left" scrollamount="5">ফারুক টেলিকমের পক্ষ থেকে কুরবানী ঈদের শুভেচ্ছা ঈদ মোবারক ।</marquee>
+        <marquee behavior="scroll" direction="left" scrollamount="5">ফারুক টেলিকমের পক্ষ থেকে কুরবানী ঈদের শুভেচ্ছা   ইদ মোবারক ।</marquee>
     </div>
 
     <div class="shop-photo">
         <img src="https://i.postimg.cc/wB0H6y58/Whats-App-Image-2026-05-21-at-4-04-39-PM-(2).jpg" alt="ফারুক টেলিকম দোকান">
+    </div>
+
+    <div class="admin-panel-box" id="adminPanel">
+        <h3>নতুন পণ্য যুক্ত করুন (অ্যাডমিন মোড)</h3>
+        <div class="form-group">
+            <label>পণ্যের নাম:</label>
+            <input type="text" id="pName" placeholder="যেমন: 45W SHAHI Charger">
+        </div>
+        <div class="form-group">
+            <label>সার্চ ট্যাগ (বাংলায় ও ইংরেজিতে কমা দিয়ে লিখুন):</label>
+            <input type="text" id="pTags" placeholder="যেমন: চার্জার, ফাস্ট, charger, fast">
+        </div>
+        <div class="form-group">
+            <label>ক্যাটাগরি সিলেক্ট করুন:</label>
+            <select id="pCategory">
+                <option value="charger">চার্জার</option>
+                <option value="battery">ব্যাটারি</option>
+                <option value="display">ডিসপ্লে</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>ছবির লিংক (Postimg/ImgBB লিংক):</label>
+            <input type="text" id="pImg" placeholder="https://i.postimg.cc/.../image.png">
+        </div>
+        <button class="submit-btn" onclick="addNewProduct()">পণ্য যোগ করুন</button>
+        <button class="submit-btn logout-btn" onclick="logoutAdmin()">অ্যাডমিন মোড বন্ধ করুন</button>
     </div>
 
     <div class="search-box">
@@ -276,24 +302,8 @@
 
     <div class="container">
         <div class="product-grid" id="productGrid">
-            
-            <div class="card" data-category="charger" data-name="2.1a android fast charger চার্জার ফাস্ট">
-                <div class="image-gallery"><img src="https://i.postimg.cc/Y9wHBHS1/download-24.jpg" alt="2.1A Android Fast Charger" onclick="openLightbox(this.src)"></div>
-                <h3>2.1A Android Fast Charger</h3>
-            </div>
-
-            <div class="card" data-category="battery" data-name="অরিজিনাল long life ব্যাটারি battery">
-                <div class="image-gallery"><img src="https://i.postimg.cc/g0hK69H3/images-(8).jpg" alt="অরিজিনাল Long life ব্যাটারি" onclick="openLightbox(this.src)"></div>
-                <h3>অরিজিনাল Long life ব্যাটারি</h3>
-            </div>
-
-            <div class="card" data-category="display" data-name="অরিজিনাল crown ডিসপ্লে display">
-                <div class="image-gallery"><img src="https://i.postimg.cc/HkgMPJwy/images-(9).jpg" alt="অরিজিনাল crown ডিসপ্লে" onclick="openLightbox(this.src)"></div>
-                <h3>অরিজিনাল crown ডিসপ্লে</h3>
-            </div>
-
+           
             <div id="noProductMessage">আপনার সার্চকৃত পণ্যটি খুঁজে পাওয়া যায়নি।</div>
-
         </div>
     </div>
 
@@ -319,7 +329,7 @@
         <div class="footer-content">
             <div class="footer-box">
                 <h3>ঠিকানা</h3>
-                <p>সুভাস্তু নজর ভ্যালি শপিং মল, ৫ম তলা, উত্তর বাড্ডা, ঢাকা।</p>
+                <p>সুভাস্তু নজরুল ভ্যালি শপিং মল, ৫ম তলা, উত্তর বাড্ডা, ঢাকা।</p>
             </div>
             <div class="footer-box">
                 <h3>ফোন নম্বর</h3>
@@ -339,16 +349,227 @@
             </div>
         </div>
         <a href="https://wa.me/8801670669591" class="btn-wa" target="_blank">WhatsApp এ মেসেজ করুন</a>
-        <p style="margin-top: 40px; opacity: 0.5;">© ২০২৬ ফারুক টেলিকম | সর্বস্বত্ব সংরক্ষিত</p>
+        
+        <p style="margin-top: 40px; opacity: 0.5; user-select: none; cursor: pointer;" onclick="handleSecretClick()">© ২০২৬ ফারুক টেলিকম | সর্বস্বত্ব সংরক্ষিত</p>
     </footer>
 
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        
+        const firebaseConfig = {
+            projectId: "faruk-telecom-e9fee",
+            authDomain: "faruk-telecom-e9fee.firebaseapp.com",
+            storageBucket: "faruk-telecom-e9fee.appspot.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const productsCollection = collection(db, "products");
+
+        window.firebaseProducts = [];
+        onSnapshot(productsCollection, (snapshot) => {
+            window.firebaseProducts = [];
+            snapshot.forEach((doc) => {
+                window.firebaseProducts.push({ id: doc.id, isOnline: true, ...doc.data() });
+            });
+            if(typeof window.combineAndRender === "function") {
+                window.combineAndRender();
+            }
+        });
+
+        window.uploadProductToFirebase = async function(name, tags, category, img) {
+            try {
+                await addDoc(productsCollection, {
+                    name: name,
+                    tags: tags,
+                    category: category,
+                    img: img,
+                    timestamp: Date.now()
+                });
+                return true;
+            } catch (error) {
+                console.error("Firebase Add Error: ", error);
+                return false;
+            }
+        };
+
+        window.deleteProductFromFirebase = async function(id) {
+            try {
+                await deleteDoc(doc(db, "products", id));
+                return true;
+            } catch (error) {
+                console.error("Firebase Delete Error: ", error);
+                return false;
+            }
+        };
+    </script>
+
+   
     <script>
+        const defaultProducts = [
+            { id: 1, category: "charger", name: "25W SHAHI charger", tags: "charger চার্জার ফাস্ট", img: "https://i.postimg.cc/Z5r6Pb1y/Gemini-Generated-Image-71ogrl71ogrl71og.png" },
+            { id: 2, category: "charger", name: "33W SHAHI Charger", tags: "charger চার্জার ফাস্ট", img: "https://i.postimg.cc/qRqyy8st/Gemini-Generated-Image-27ismb27ismb27is.png" },
+            { id: 3, category: "charger", name: "20W SHAHI Charger", tags: "charger চার্জার ফাস্ট", img: "https://i.postimg.cc/bwqTdSBJ/Gemini-Generated-Image-fb9wjlfb9wjlfb9w.png" },
+            { id: 4, category: "charger", name: "14W SHAHI Charger", tags: "charger চার্জার ফাস্ট", img: "https://i.postimg.cc/DZ3KRK6f/Gemini-Generated-Image-x444qmx444qmx444.png" },
+            { id: 5, category: "battery", name: "অরিজিনাল Long life ব্যাটারি", tags: "battery ব্যাটারি", img: "https://i.postimg.cc/g0hK69H3/images-(8).jpg" },
+            { id: 6, category: "display", name: "অরিজিনাল crown ডিসপ্লে", tags: "display ডিসপ্লে", img: "https://i.postimg.cc/HkgMPJwy/images-(9).jpg" }
+        ];
+
+        let localProducts = JSON.parse(localStorage.getItem('faruk_products')) || defaultProducts;
+        let products = [...localProducts]; 
         let currentCategory = 'all';
+        let isAdmin = false;
+
+        window.onload = function() {
+            combineAndRender();
+        };
+
+        window.combineAndRender = function() {
+            const onlineProducts = window.firebaseProducts || [];
+            products = [...localProducts, ...onlineProducts];
+            renderProducts();
+        };
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const noMessage = document.getElementById('noProductMessage');
+            grid.innerHTML = '';
+            grid.appendChild(noMessage);
+
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.setAttribute('data-category', product.category);
+                card.setAttribute('data-name', `${product.name} ${product.tags || ''}`);
+
+                const deleteId = product.isOnline ? `'${product.id}'` : product.id;
+
+                card.innerHTML = `
+                    <div class="image-gallery">
+                        <img src="${product.img}" alt="${product.name}" onclick="openLightbox(this.src)">
+                    </div>
+                    <h3>${product.name}</h3>
+                    <button class="delete-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteProduct(${deleteId}, ${product.isOnline || false})">মুছে ফেলুন (Delete)</button>
+                `;
+                grid.insertBefore(card, noMessage);
+            });
+
+            updateGallery();
+        }
+
+       
+        function loginAdmin() {
+            let password = prompt("অ্যাডমিন পাসওয়ার্ড দিন:");
+            if (password === "1234") {
+                isAdmin = true;
+                document.getElementById('adminPanel').style.display = 'block';
+                alert("স্বাগতম ফারুক ভাই! আপনি এখন নতুন পণ্য যুক্ত বা ডিলিট করতে পারবেন।");
+                renderProducts();
+                window.scrollTo({top: document.getElementById('adminPanel').offsetTop - 20, behavior: 'smooth'});
+            } else {
+                alert("ভুল পাসওয়ার্ড!");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            document.getElementById('adminPanel').style.display = 'none';
+            renderProducts();
+            alert("অ্যাডমিন মোড বন্ধ করা হয়েছে।");
+        }
+
+    
+        let clickCount = 0;
+        function handleSecretClick() {
+            clickCount++;
+            if (clickCount === 3) {
+                clickCount = 0;
+                loginAdmin();
+            }
+            setTimeout(() => { clickCount = 0; }, 3000); 
+        }
+
+       
+        let secretInput = ""; 
+        document.addEventListener('keydown', function(event) {
+            
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') {
+                return;
+            }
+            
+           
+            if (event.key.length === 1) {
+                secretInput += event.key.toLowerCase(); 
+            }
+
+            
+            if (secretInput.endsWith("mumin")) {
+                secretInput = "";
+                loginAdmin(); 
+            }
+
+            
+            if (secretInput.length > 20) {
+                secretInput = secretInput.substring(10);
+            }
+        });
+        async function addNewProduct() {
+            const name = document.getElementById('pName').value.trim();
+            const tags = document.getElementById('pTags').value.trim();
+            const category = document.getElementById('pCategory').value;
+            const img = document.getElementById('pImg').value.trim();
+
+            if (!name || !img) {
+                alert("দয়া করে নাম এবং ছবির লিংক সঠিকভাবে দিন!");
+                return;
+            }
+
+            if (typeof window.uploadProductToFirebase === "function") {
+                const success = await window.uploadProductToFirebase(name, tags, category, img);
+                if (success) {
+                    document.getElementById('pName').value = '';
+                    document.getElementById('pTags').value = '';
+                    document.getElementById('pImg').value = '';
+                    alert("সফলভাবে নতুন পণ্যটি অনলাইনে যুক্ত হয়েছে!");
+                    return;
+                }
+            }
+
+            const newProduct = { id: Date.now(), category, name, tags, img };
+            localProducts.push(newProduct);
+            localStorage.setItem('faruk_products', JSON.stringify(localProducts));
+            
+            document.getElementById('pName').value = '';
+            document.getElementById('pTags').value = '';
+            document.getElementById('pImg').value = '';
+
+            alert("পণ্যটি যুক্ত হয়েছে (Local Backup)!");
+            combineAndRender();
+        }
+
+        async function deleteProduct(id, isOnline) {
+            if (confirm("আপনি কি নিশ্চিত যে এই পণ্যটি ডিলিট করতে চান?")) {
+                if (isOnline && typeof window.deleteProductFromFirebase === "function") {
+                    const success = await window.deleteProductFromFirebase(id);
+                    if (success) {
+                        alert("অনলাইন থেকে পণ্যটি সফলভাবে ডিলিট করা হয়েছে!");
+                        return;
+                    }
+                }
+
+                localProducts = localProducts.filter(p => p.id !== id);
+                localStorage.setItem('faruk_products', JSON.stringify(localProducts));
+                alert("পণ্যটি ডিলিট করা হয়েছে!");
+                combineAndRender();
+            }
+        }
 
         function filterCategory(category, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
             currentCategory = category;
             updateGallery();
         }
@@ -356,12 +577,7 @@
         function handleSearch() {
             const searchInput = document.getElementById('searchInput').value;
             const clearBtn = document.getElementById('clearBtn');
-            
-            if (searchInput.length > 0) {
-                clearBtn.style.display = 'block';
-            } else {
-                clearBtn.style.display = 'none';
-            }
+            clearBtn.style.display = searchInput.length > 0 ? 'block' : 'none';
             updateGallery();
         }
 
@@ -383,19 +599,11 @@
                 const matchesCategory = (currentCategory === 'all' || cardCategory === currentCategory);
                 const matchesSearch = cardName.includes(searchInput);
 
-                if (matchesCategory && matchesSearch) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
             });
 
             let visibleCount = Array.from(cards).filter(card => card.style.display === 'block').length;
-            if (visibleCount === 0) {
-                noMessage.style.display = 'block';
-            } else {
-                noMessage.style.display = 'none';
-            }
+            noMessage.style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
         window.onscroll = function() {
@@ -416,9 +624,7 @@
             navigator.clipboard.writeText(num).then(() => {
                 const toast = document.getElementById('copyToast');
                 toast.style.display = 'block';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 2000);
+                setTimeout(() => { toast.style.display = 'none'; }, 2000);
             });
         });
 
