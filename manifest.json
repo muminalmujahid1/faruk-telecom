@@ -1,0 +1,20 @@
+{
+  "name": "ফারুক টেলিকম",
+  "short_name": "FarukTel",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#e67e22",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/6QZB4DbQ/Untitled-design.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.postimg.cc/6QZB4DbQ/Untitled-design.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
