@@ -83,13 +83,11 @@
             opacity: 1;
         }
         
-        /* ইম্প্রুভমেন্ট ১: ইমেজ স্কেলিটন লোডার */
-        .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 18px; background: #e0e0e0; height: 230px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 18px; background: #f0f0f0; height: 230px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
         .image-gallery.loading { animation: skeleton-pulse 1.5s infinite ease-in-out; }
         @keyframes skeleton-pulse { 0% { background-color: #f0f0f0; } 50% { background-color: #e0e0e0; } 100% { background-color: #f0f0f0; } }
         
-        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s ease; opacity: 0; }
-        .card img.loaded { opacity: 1; }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s ease; display: block; }
         .card:hover img { transform: scale(1.08); }
         
         .card h3 { margin: 15px 0 10px; font-size: 1.25em; color: #2c3e50; }
@@ -231,13 +229,37 @@
             100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
+        /* মোবাইল স্ক্রিনের রেসপনসিভনেস আপডেট (পাশাপাশি ২টি প্রোডাক্টের জন্য) */
         @media (max-width: 768px) {
             header { padding: 10px 5%; }
             
             .logo-text { font-size: 24px; } 
             .logo-img { width: 40px; height: 40px; } 
             
-            .container, .about-section, .shop-photo { padding: 10px 5%; }
+            .container, .about-section, .shop-photo { padding: 15px 3%; }
+            
+            /* মোবােইলে ২ কলাম লেআউট নিশ্চিত করা এবং গ্যাপ ও প্যাডিং কিছুটা কমানো */
+            .product-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 12px; 
+            }
+            
+            .card { 
+                padding: 12px; 
+                border-radius: 16px; 
+            }
+            
+            .image-gallery { 
+                height: 140px; 
+                border-radius: 12px; 
+                margin-bottom: 8px;
+            }
+            
+            .card h3 { 
+                font-size: 0.95em; 
+                margin: 8px 0 5px; 
+            }
+            
             .footer-content { gap: 15px; }  
             
             .floating-buttons { bottom: 15px; right: 15px; gap: 8px; }
@@ -356,10 +378,10 @@
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
                 <a href="https://www.youtube.com/@faruk-telecom0" class="social-icon" target="_blank" title="YouTube">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M21.582,6.186C21.434,5.573,20.935,5.075,20.322,4.927C18.642,4.5,12,4.5,12,4.5s-6.642,0-8.322,0.427 C3.065,5.075,2.566,5.573,2.418,6.186C2,7.865,2,12s0,4.135,0.418,5.814c0.148,0.613,0.647,1.111,1.26,1.259 C5.358,19.5,12,19.5,12,19.5s6.642,0,8.322-0.427c0.613-0.148,1.112-0.646,1.26-1.259C22,16.135,22,12,22,12 S22,7.865,21.582,6.186z M9.75,15.5v-7l6,3.5L9.75,15.5z"/>
-    </svg>
-</a>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </div>
@@ -451,7 +473,7 @@
             const onlineProducts = window.firebaseProducts || [];
             products = [...localProducts, ...onlineProducts];
             renderProducts();
-            updateProductCounters(); // কাউন্টার আপডেট ফাংশন কল
+            updateProductCounters(); 
         };
 
         function renderProducts() {
@@ -468,10 +490,9 @@
 
                 const deleteId = product.isOnline ? `'${product.id}'` : product.id;
 
-                // ইম্প্রুভমেন্ট ১: ইমেজ লোড হওয়া পর্যন্ত স্কেলিটন বা ব্যাকগ্রাউন্ড অ্যানিমেশন দেখাবে
                 card.innerHTML = `
-                    <div class="image-gallery loading">
-                        <img src="${product.img}" alt="${product.name}" onload="this.classList.add('loaded'); this.parentElement.classList.remove('loading');" onclick="openLightbox(this.src)">
+                    <div class="image-gallery">
+                        <img src="${product.img}" alt="${product.name}" onclick="openLightbox(this.src)">
                     </div>
                     <h3>${product.name}</h3>
                     <button class="delete-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteProduct(${deleteId}, ${product.isOnline || false})">মুছে ফেলুন (Delete)</button>
@@ -482,7 +503,6 @@
             updateGallery();
         }
 
-        // ইম্প্রুভমেন্ট ৩: কোন ক্যাটাগরিতে কয়টি প্রোডাক্ট আছে তা দেখানোর ফাংশন
         function updateProductCounters() {
             const counts = { all: products.length, charger: 0, battery: 0, display: 0 };
             products.forEach(p => { if (counts[p.category] !== undefined) counts[p.category]++; });
