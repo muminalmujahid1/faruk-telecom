@@ -89,8 +89,12 @@
       
       .card h3 { margin: 15px 0 10px; font-size: 1.25em; color: #2c3e50; }
       
-      .delete-btn { display: none; background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-top: 10px; font-family: inherit; font-weight: bold; width: 100%; }
+      /* বাটন গ্রুপ এরিয়া */
+      .action-buttons { display: none; margin-top: 15px; gap: 10px; justify-content: center; }
+      .delete-btn { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; flex: 1; }
       .delete-btn:hover { background: #e74c3c; }
+      .edit-btn { background: #2980b9; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; flex: 1; }
+      .edit-btn:hover { background: #3498db; }
 
       #noProductMessage { display: none; text-align: center; font-size: 1.2em; color: #7f8c8d; padding: 40px 0; width: 100%; grid-column: 1 / -1; }
 
@@ -398,7 +402,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         projectId: "faruk-telecom-e9fee",
@@ -474,7 +478,6 @@
         snapshot.forEach((doc) => {
             window.firebaseProducts.push({ id: doc.id, ...doc.data() });
         });
-        // Render Functions dynamically based on database updates
         renderProducts(window.firebaseProducts);
         updateCounts();
     });
@@ -482,9 +485,7 @@
     // Global Functions for UI Actions
     window.renderProducts = function(products) {
         const grid = document.getElementById("productGrid");
-        const noProduct = document.getElementById("noProductMessage");
         
-        // Keep the no-product message inside the grid setup
         grid.innerHTML = '<div id="noProductMessage" style="display:none;">আপনার সার্চকৃত পণ্যটি খুঁজে পাওয়া যায়নি।</div>';
         
         if(products.length === 0) {
@@ -500,14 +501,42 @@
                     <img src="${product.productImage}" alt="${product.productName}">
                 </div>
                 <h3>${product.productName}</h3>
-                <button class="delete-btn" id="del-${product.id}" onclick="deleteProduct('${product.id}')">মুছে ফেলুন</button>
+                <div class="action-buttons">
+                    <button class="edit-btn" onclick="editProduct('${product.id}', '${product.productName.replace(/'/g, "\\'")}', '${(product.productTags || "").replace(/'/g, "\\'")}')">এডিট করুন</button>
+                    <button class="delete-btn" onclick="deleteProduct('${product.id}')">মুছে ফেলুন</button>
+                </div>
             `;
             grid.appendChild(card);
         });
         
-        // Show delete buttons if admin mode is active
         if(localStorage.getItem("adminLoggedIn") === "true") {
-            showDeleteButtons();
+            showAdminButtons();
+        }
+    };
+
+    // Edit Product Function
+    window.editProduct = async function(id, currentName, currentTags) {
+        const newName = prompt("পণ্যের নতুন নাম লিখুন:", currentName);
+        if (newName === null) return; // Cancel চাপলে চলে যাবে
+        
+        if (newName.trim() === "") {
+            alert("নাম ফাঁকা রাখা যাবে না!");
+            return;
+        }
+
+        const newTags = prompt("নতুন সার্চ ট্যাগ লিখুন (কমা দিয়ে):", currentTags);
+        if (newTags === null) return;
+
+        try {
+            const productRef = doc(db, "products", id);
+            await updateDoc(productRef, {
+                productName: newName,
+                productTags: newTags
+            });
+            alert("পণ্যের তথ্য সফলভাবে আপডেট হয়েছে! ✏️");
+        } catch (error) {
+            console.error("Error updating document: ", error);
+            alert("আপডেট করতে সমস্যা হয়েছে।");
         }
     };
 
@@ -536,7 +565,6 @@
 </script>
 
 <script>
-    // Traditional JS Helpers for Navigation, Search & Layout
     function handleSearch() {
         const query = document.getElementById("searchInput").value.toLowerCase().trim();
         const clearBtn = document.getElementById("clearBtn");
@@ -569,7 +597,6 @@
         }
     }
 
-    // Lightbox Control
     function openLightbox(src) {
         const lb = document.getElementById("customLightbox");
         const img = document.getElementById("lightboxImg");
@@ -580,7 +607,6 @@
         document.getElementById("customLightbox").classList.remove("active");
     }
 
-    // Scroll Control
     window.onscroll = function() {
         const btn = document.getElementById("scrollTopBtn");
         if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
@@ -593,7 +619,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Copy Phone Number
     document.getElementById("phoneNum").addEventListener("click", function() {
         navigator.clipboard.writeText("+8801670669591");
         const toast = document.getElementById("copyToast");
@@ -601,17 +626,17 @@
         setTimeout(() => { toast.style.display = "none"; }, 2000);
     });
 
-    // Admin Panel Logic 
+    // Admin Panel Password Logic
     let clickCount = 0;
     function handleSecretClick() {
         clickCount++;
         if(clickCount === 5) {
             clickCount = 0;
             const password = prompt("অ্যাডমিন পাসওয়ার্ড দিন:");
-            if(password === "faruk2026") { // আপনার পাসওয়ার্ডটি এখানে চেক হবে
+            if(password === "faruk2026") { 
                 localStorage.setItem("adminLoggedIn", "true");
                 document.getElementById("adminPanel").style.display = "block";
-                showDeleteButtons();
+                showAdminButtons();
                 alert("অ্যাডমিন মোড অন হয়েছে!");
             } else {
                 alert("ভুল পাসওয়ার্ড!");
@@ -622,18 +647,17 @@
     function logoutAdmin() {
         localStorage.removeItem("adminLoggedIn");
         document.getElementById("adminPanel").style.display = "none";
-        hideDeleteButtons();
+        hideAdminButtons();
         alert("অ্যাডমিন মোড বন্ধ হয়েছে।");
     }
 
-    function showDeleteButtons() {
-        document.querySelectorAll(".delete-btn").forEach(b => b.style.display = "block");
+    function showAdminButtons() {
+        document.querySelectorAll(".action-buttons").forEach(b => b.style.display = "flex");
     }
-    function hideDeleteButtons() {
-        document.querySelectorAll(".delete-btn").forEach(b => b.style.display = "none");
+    function hideAdminButtons() {
+        document.querySelectorAll(".action-buttons").forEach(b => b.style.display = "none");
     }
 
-    // Restore Admin Panel view on refresh if logged in
     window.addEventListener("load", () => {
         if(localStorage.getItem("adminLoggedIn") === "true") {
             document.getElementById("adminPanel").style.display = "block";
