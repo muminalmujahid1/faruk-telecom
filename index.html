@@ -84,8 +84,6 @@
         }
         
         .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 18px; background: #f0f0f0; height: 230px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
-        .image-gallery.loading { animation: skeleton-pulse 1.5s infinite ease-in-out; }
-        @keyframes skeleton-pulse { 0% { background-color: #f0f0f0; } 50% { background-color: #e0e0e0; } 100% { background-color: #f0f0f0; } }
         
         .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s ease; display: block; }
         .card:hover img { transform: scale(1.08); }
@@ -108,6 +106,7 @@
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; }
         .submit-btn { background: #e67e22; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: inherit; font-size: 1.1em; }
         .submit-btn:hover { background: #d35400; }
+        .submit-btn:disabled { background: #bdc3c7; cursor: not-allowed; }
         .logout-btn { background: #7f8c8d; margin-top: 10px; }
 
         .floating-buttons { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
@@ -229,7 +228,6 @@
             100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        /* মোবাইল স্ক্রিনের রেসপনসিভনেস আপডেট (পাশাপাশি ২টি প্রোডাক্টের জন্য) */
         @media (max-width: 768px) {
             header { padding: 10px 5%; }
             
@@ -238,7 +236,6 @@
             
             .container, .about-section, .shop-photo { padding: 15px 3%; }
             
-            /* মোবােইলে ২ কলাম লেআউট নিশ্চিত করা এবং গ্যাপ ও প্যাডিং কিছুটা কমানো */
             .product-grid { 
                 grid-template-columns: repeat(2, 1fr); 
                 gap: 12px; 
@@ -314,10 +311,10 @@
             </select>
         </div>
         <div class="form-group">
-            <label>ছবির লিংক (Postimg/ImgBB লিংক):</label>
-            <input type="text" id="pImg" placeholder="https://i.postimg.cc/.../image.png">
+            <label>পণ্যের ছবি সিলেক্ট করুন (সরাসরি গ্যালারি থেকে):</label>
+            <input type="file" id="pImgFile" accept="image/*">
         </div>
-        <button class="submit-btn" onclick="addNewProduct()">পণ্য যোগ করুন</button>
+        <button class="submit-btn" id="submitBtn" onclick="addNewProduct()">পণ্য যোগ করুন</button>
         <button class="submit-btn logout-btn" onclick="logoutAdmin()">অ্যাডমিন মোড বন্ধ করুন</button>
     </div>
 
@@ -337,7 +334,6 @@
 
     <div class="container">
         <div class="product-grid" id="productGrid">
-           
             <div id="noProductMessage">আপনার সার্চকৃত পণ্যটি খুঁজে পাওয়া যায়নি।</div>
         </div>
     </div>
@@ -399,8 +395,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Firebase Storage মডিউল ইমপোর্ট করা হলো
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        
         const firebaseConfig = {
             projectId: "faruk-telecom-e9fee",
             authDomain: "faruk-telecom-e9fee.firebaseapp.com",
@@ -409,6 +406,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         const productsCollection = collection(db, "products");
 
         window.firebaseProducts = [];
@@ -422,25 +420,42 @@
             }
         });
 
-        window.uploadProductToFirebase = async function(name, tags, category, img) {
+        // সরাসরি ফাইল স্টোরেজে আপলোড করার ফাংশন
+        window.uploadProductToFirebase = async function(name, tags, category, imageFile) {
             try {
+                // স্টোরেজে একটি ইউনিক ফাইল নেম তৈরি
+                const fileRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
+                // ফাইল আপলোড করা হচ্ছে
+                const snapshot = await uploadBytes(fileRef, imageFile);
+                // আপলোড করা ছবির লাইভ ডাউনলোড লিংক নেওয়া হচ্ছে
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                // ফায়ারস্টোর ডাটাবেসে ডেটা সেভ করা হচ্ছে
                 await addDoc(productsCollection, {
                     name: name,
                     tags: tags,
                     category: category,
-                    img: img,
+                    img: downloadURL,
+                    storagePath: fileRef.fullPath, // ডিলিট করার সুবিধার জন্য পাথ সেভ রাখা হলো
                     timestamp: Date.now()
                 });
                 return true;
             } catch (error) {
-                console.error("Firebase Add Error: ", error);
+                console.error("Firebase Add/Upload Error: ", error);
                 return false;
             }
         };
 
-        window.deleteProductFromFirebase = async function(id) {
+        window.deleteProductFromFirebase = async function(id, storagePath) {
             try {
+                // ফায়ারস্টোর থেকে প্রোডাক্ট ডিলিট
                 await deleteDoc(doc(db, "products", id));
+                
+                // যদি ফাইলটি ফায়ারবেস স্টোরেজে থাকে তবে সেখান থেকেও ছবি ডিলিট করা হবে
+                if (storagePath) {
+                    const fileRef = ref(storage, storagePath);
+                    await deleteObject(fileRef);
+                }
                 return true;
             } catch (error) {
                 console.error("Firebase Delete Error: ", error);
@@ -449,7 +464,6 @@
         };
     </script>
 
-   
     <script>
         const defaultProducts = [
             { id: 1, category: "charger", name: "25W SHAHI charger", tags: "charger চার্জার ফাস্ট", img: "https://i.postimg.cc/Z5r6Pb1y/Gemini-Generated-Image-71ogrl71ogrl71og.png" },
@@ -489,13 +503,14 @@
                 card.setAttribute('data-name', `${product.name} ${product.tags || ''}`);
 
                 const deleteId = product.isOnline ? `'${product.id}'` : product.id;
+                const storagePath = product.storagePath ? `'${product.storagePath}'` : 'null';
 
                 card.innerHTML = `
                     <div class="image-gallery">
                         <img src="${product.img}" alt="${product.name}" onclick="openLightbox(this.src)">
                     </div>
                     <h3>${product.name}</h3>
-                    <button class="delete-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteProduct(${deleteId}, ${product.isOnline || false})">মুছে ফেলুন (Delete)</button>
+                    <button class="delete-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteProduct(${deleteId}, ${product.isOnline || false}, ${storagePath})">মুছে ফেলুন (Delete)</button>
                 `;
                 grid.insertBefore(card, noMessage);
             });
@@ -516,7 +531,6 @@
             }
         }
 
-       
         function loginAdmin() {
             let password = prompt("অ্যাডমিন পাসওয়ার্ড দিন:");
             if (password === "1234") {
@@ -537,7 +551,6 @@
             alert("অ্যাডমিন মোড বন্ধ করা হয়েছে।");
         }
 
-    
         let clickCount = 0;
         function handleSecretClick() {
             clickCount++;
@@ -548,70 +561,65 @@
             setTimeout(() => { clickCount = 0; }, 3000); 
         }
 
-       
         let secretInput = ""; 
         document.addEventListener('keydown', function(event) {
-            
             if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') {
                 return;
             }
-            
-           
             if (event.key.length === 1) {
                 secretInput += event.key.toLowerCase(); 
             }
-
-            
             if (secretInput.endsWith("mumin")) {
                 secretInput = "";
                 loginAdmin(); 
             }
-
-            
             if (secretInput.length > 20) {
                 secretInput = secretInput.substring(10);
             }
         });
+
+        // পণ্য যুক্ত করার মডিফাইড ফাংশন
         async function addNewProduct() {
             const name = document.getElementById('pName').value.trim();
             const tags = document.getElementById('pTags').value.trim();
             const category = document.getElementById('pCategory').value;
-            const img = document.getElementById('pImg').value.trim();
+            const fileInput = document.getElementById('pImgFile');
+            const imageFile = fileInput.files;
+            const submitBtn = document.getElementById('submitBtn');
 
-            if (!name || !img) {
-                alert("দয়া করে নাম এবং ছবির লিংক সঠিকভাবে দিন!");
+            if (!name || !imageFile) {
+                alert("দয়া করে নাম লিখুন এবং গ্যালারি থেকে একটি ছবি সিলেক্ট করুন!");
                 return;
             }
 
+            // আপলোড শুরু হওয়ার সময় বাটন লক করা
+            submitBtn.disabled = true;
+            submitBtn.innerText = "ছবি আপলোড হচ্ছে, অপেক্ষা করুন...";
+
             if (typeof window.uploadProductToFirebase === "function") {
-                const success = await window.uploadProductToFirebase(name, tags, category, img);
+                const success = await window.uploadProductToFirebase(name, tags, category, imageFile);
                 if (success) {
                     document.getElementById('pName').value = '';
                     document.getElementById('pTags').value = '';
-                    document.getElementById('pImg').value = '';
-                    alert("সফলভাবে নতুন পণ্যটি অনলাইনে যুক্ত হয়েছে!");
+                    fileInput.value = ''; // ফাইল ইনপুট ক্লিয়ার
+                    alert("সফলভাবে নতুন পণ্য এবং ছবি অনলাইনে যুক্ত হয়েছে!");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "পণ্য যোগ করুন";
                     return;
                 }
             }
 
-            const newProduct = { id: Date.now(), category, name, tags, img };
-            localProducts.push(newProduct);
-            localStorage.setItem('faruk_products', JSON.stringify(localProducts));
-            
-            document.getElementById('pName').value = '';
-            document.getElementById('pTags').value = '';
-            document.getElementById('pImg').value = '';
-
-            alert("পণ্যটি যুক্ত হয়েছে (Local Backup)!");
-            combineAndRender();
+            alert("দুঃখিত! ছবি আপলোড করা যায়নি। ফায়ারবেস স্টোরেজ সেটিংস চেক করুন।");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "পণ্য যোগ করুন";
         }
 
-        async function deleteProduct(id, isOnline) {
+        async function deleteProduct(id, isOnline, storagePath) {
             if (confirm("আপনি কি নিশ্চিত যে এই পণ্যটি ডিলিট করতে চান?")) {
                 if (isOnline && typeof window.deleteProductFromFirebase === "function") {
-                    const success = await window.deleteProductFromFirebase(id);
+                    const success = await window.deleteProductFromFirebase(id, storagePath);
                     if (success) {
-                        alert("অনলাইন থেকে পণ্যটি সফলভাবে ডিলিট করা হয়েছে!");
+                        alert("অনলাইন থেকে পণ্য এবং ছবি সফলভাবে ডিলিট করা হয়েছে!");
                         return;
                     }
                 }
