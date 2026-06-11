@@ -89,7 +89,6 @@
       
       .card h3 { margin: 15px 0 10px; font-size: 1.25em; color: #2c3e50; }
       
-      /* বাটন গ্রুপ এরিয়া */
       .action-buttons { display: none; margin-top: 15px; gap: 10px; justify-content: center; }
       .delete-btn { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; flex: 1; }
       .delete-btn:hover { background: #e74c3c; }
@@ -107,6 +106,7 @@
       .form-group { margin-bottom: 15px; }
       .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
       .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; }
+      
       .submit-btn { background: #e67e22; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: inherit; font-size: 1.1em; margin-bottom: 10px;}
       .submit-btn:hover { background: #d35400; }
       .submit-btn:disabled { background: #bdc3c7; cursor: not-allowed; }
@@ -289,7 +289,7 @@
     </header>
 
     <div class="notice-bar">
-        <marquee behavior="scroll" direction="left" scrollamount="5">ফারুক টেলিকমের পক্ষ থেকে কুরবানী ঈদের শুভেচ্ছা ইদ মোবারক ।</marquee>
+        <marquee id="marqueeNotice" behavior="scroll" direction="left" scrollamount="5">লোড হচ্ছে...</marquee>
     </div>
 
     <div class="shop-photo">
@@ -321,6 +321,14 @@
             <p id="upload-status" style="color: green; text-align: center; margin-top: 5px; font-weight: bold; display: none;">✓ ছবি আপলোড সফল হয়েছে!</p>
         </div>
         <button class="submit-btn" id="submitBtn">পণ্য যোগ করুন</button>
+        
+        <h3 style="margin-top: 25px; border-top: 2px dashed #e67e22; padding-top: 15px;">চলতি নোটিশ পরিবর্তন করুন</h3>
+        <div class="form-group">
+            <label>নতুন নোটিশ লেখা:</label>
+            <input type="text" id="newNoticeInput" placeholder="এখানে নতুন নোটিশটি লিখুন...">
+        </div>
+        <button class="submit-btn" id="updateNoticeBtn" style="background: #27ae60;">নোটিশ আপডেট করুন</button>
+        
         <button class="submit-btn logout-btn" onclick="logoutAdmin()">অ্যাডমিন মোড বন্ধ করুন</button>
     </div>
 
@@ -402,7 +410,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         projectId: "faruk-telecom-e9fee",
@@ -413,6 +421,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const productsCollection = collection(db, "products");
+    
+    // নোটিশ এর জন্য ডক রেফারেন্স
+    const noticeDocRef = doc(db, "settings", "globalNotice");
 
     window.firebaseProducts = [];
     let uploadedImageUrl = ""; 
@@ -459,7 +470,6 @@
 
             alert("পণ্যটি সফলভাবে যুক্ত হয়েছে! 🎉");
             
-            // Clear Form
             document.getElementById("pName").value = "";
             document.getElementById("pTags").value = "";
             uploadedImageUrl = "";
@@ -469,6 +479,33 @@
         } catch (e) {
             console.error("Error adding document: ", e);
             alert("পণ্য যোগ করতে সমস্যা হয়েছে।");
+        }
+    });
+
+    // ৪ নম্বর ফিচার: ফায়ারবেস থেকে লাইভ নোটিশ লোড ও আপডেট করার কোড
+    onSnapshot(noticeDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const currentNotice = docSnap.data().text;
+            document.getElementById("marqueeNotice").innerText = currentNotice;
+            document.getElementById("newNoticeInput").value = currentNotice;
+        } else {
+            // ডাটাবেজে প্রথমবার কোনো নোটিশ না থাকলে এটি সেট হবে
+            document.getElementById("marqueeNotice").innerText = "ফারুক টেলিকমে আপনাকে স্বাগতম!";
+        }
+    });
+
+    document.getElementById("updateNoticeBtn").addEventListener("click", async () => {
+        const textValue = document.getElementById("newNoticeInput").value.trim();
+        if(!textValue) {
+            alert("নোটিশ ফাঁকা রাখা যাবে না!");
+            return;
+        }
+        try {
+            await setDoc(noticeDocRef, { text: textValue });
+            alert("নোটিশটি সফলভাবে আপডেট করা হয়েছে! 📢");
+        } catch (error) {
+            console.error("Error updating notice: ", error);
+            alert("নোটিশ আপডেট করতে সমস্যা হয়েছে।");
         }
     });
 
@@ -514,10 +551,9 @@
         }
     };
 
-    // Edit Product Function
     window.editProduct = async function(id, currentName, currentTags) {
         const newName = prompt("পণ্যের নতুন নাম লিখুন:", currentName);
-        if (newName === null) return; // Cancel চাপলে চলে যাবে
+        if (newName === null) return;
         
         if (newName.trim() === "") {
             alert("নাম ফাঁকা রাখা যাবে না!");
