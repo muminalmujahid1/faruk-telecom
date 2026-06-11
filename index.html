@@ -6,7 +6,6 @@
   <meta charset="UTF-8">
   <title>ফারুক টেলিকম</title>
   <link rel="manifest" href="/manifest.json">
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WVH3DBE1N"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -84,8 +83,13 @@
             opacity: 1;
         }
         
-        .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 18px; background: #f9f9f9; height: 230px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s ease; }
+        /* ইম্প্রুভমেন্ট ১: ইমেজ স্কেলিটন লোডার */
+        .image-gallery { margin-bottom: 15px; overflow: hidden; border-radius: 18px; background: #e0e0e0; height: 230px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .image-gallery.loading { animation: skeleton-pulse 1.5s infinite ease-in-out; }
+        @keyframes skeleton-pulse { 0% { background-color: #f0f0f0; } 50% { background-color: #e0e0e0; } 100% { background-color: #f0f0f0; } }
+        
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s ease; opacity: 0; }
+        .card img.loaded { opacity: 1; }
         .card:hover img { transform: scale(1.08); }
         
         .card h3 { margin: 15px 0 10px; font-size: 1.25em; color: #2c3e50; }
@@ -99,6 +103,304 @@
         .about-section h2 { margin-bottom: 15px; color: #1a1a2e; font-size: 22px; }
         .about-section p { max-width: 800px; margin: 0 auto; line-height: 1.8; color: #555; font-size: 1.1em; }
 
+        .admin-panel-box { display: none; background: #fff; border: 2px dashed #e67e22; border-radius: 15px; padding: 25px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; text-align: left; }
+        .admin-panel-box h3 { color: #1a1a2e; margin-bottom: 15px; border-bottom: 2px solid #e67e22; padding-bottom: 5px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; }
+        .submit-btn { background: #e67e22; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: inherit; font-size: 1.1em; }
+        .submit-btn:hover { background: #d35400; }
+        .logout-btn { background: #7f8c8d; margin-top: 10px; }
+
+        .floating-buttons { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
+        .float-btn { color: white; width: 55px; height: 55px; border-radius: 50px; text-align: center; line-height: 55px; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-decoration: none; transition: 0.3s; border: none; cursor: pointer; }
+        
+        .float-wa { 
+            background: #25d366; 
+            font-size: 28px; 
+            line-height: 55px; 
+            animation: float-wa-pulse 2s infinite !important; 
+        }
+        .float-wa:hover { transform: scale(1.08); background: #1ebd58; }
+        
+        .float-top { background: #e67e22; font-weight: bold; display: none; }
+        .float-top:hover { transform: scale(1.08); background: #d35400; }
+        
+        footer { 
+            background: #1a1a2e; 
+            color: #fff; 
+            padding: 15px 10% 5px; 
+            text-align: center; 
+            border-top: 5px solid #e67e22; 
+        }
+        .footer-content { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 20px;            
+            margin-bottom: 20px;  
+        }
+        .footer-box { max-width: 300px; }
+        .footer-box h3 { color: #e67e22; margin-bottom: 15px; font-size: 1.3em; }
+        .footer-box p { opacity: 0.9; line-height: 1.6; }
+        .call-link { display: inline-block; color: #e67e22; text-decoration: none; margin-top: 5px; font-weight: bold; }
+        
+        .social-container { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
+        .social-icon { 
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            width: 40px; 
+            height: 40px; 
+            background: rgba(255,255,255,0.08); 
+            color: #fff; 
+            border-radius: 50%; 
+            transition: 0.3s; 
+            border: 1px solid rgba(230,126,34,0.3); 
+            padding: 9px;
+        }
+        .social-icon svg { width: 100%; height: 100%; }
+        .social-icon:hover { background: #e67e22; transform: translateY(-3px); box-shadow: 0 4px 10px rgba(230,126,34,0.3); color: #fff; }
+
+        .copy-toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 24px; border-radius: 30px; font-size: 15px; font-weight: bold; display: none; z-index: 2000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 1px solid #e67e22; }
+
+        .btn-wa { 
+            display: inline-block; 
+            background: #25d366; 
+            color: white; 
+            padding: 15px 40px; 
+            border-radius: 50px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 1.1em; 
+            transition: 0.3s; 
+            animation: footer-wa-pulse 2s infinite !important; 
+        }
+        .btn-wa:hover { transform: scale(1.04); background: #1ebd58; }
+        .lightbox {
+            position: fixed;
+            z-index: 9999;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content {
+            max-width: 85%;
+            max-height: 85%;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(255,255,255,0.15);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            object-fit: contain;
+        }
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px; right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+        .lightbox-close:hover {
+            color: #e67e22;
+        }
+
+        @keyframes float-wa-pulse {
+            0% { box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        @keyframes footer-wa-pulse {
+            0% { box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 10px 5%; }
+            
+            .logo-text { font-size: 24px; } 
+            .logo-img { width: 40px; height: 40px; } 
+            
+            .container, .about-section, .shop-photo { padding: 10px 5%; }
+            .footer-content { gap: 15px; }  
+            
+            .floating-buttons { bottom: 15px; right: 15px; gap: 8px; }
+            .float-btn { 
+                width: 40px;       
+                height: 40px; 
+                line-height: 40px; 
+                font-size: 18px; 
+            }
+            .float-wa { 
+                font-size: 22px; 
+                line-height: 40px; 
+            }
+            .lightbox-close { top: 15px; right: 20px; font-size: 35px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-logo-container">
+            <img src="https://i.postimg.cc/6QZB4DbQ/Untitled-design.png" alt="ফারুক টেলিকম লোগো" class="logo-img">
+        </div>
+        <div class="logo-text">ফারুক টেলিকম</div>
+        <p>সারা বাংলাদেশের নির্ভরযোগ্য পাইকারি mobile এক্সেসরিজ শপ</p>
+    </header>
+
+    <div class="notice-bar">
+        <marquee behavior="scroll" direction="left" scrollamount="5">ফারুক টেলিকমের পক্ষ থেকে কুরবানী ঈদের শুভেচ্ছা   ইদ মোবারক ।</marquee>
+    </div>
+
+    <div class="shop-photo">
+        <img src="https://i.postimg.cc/wB0H6y58/Whats-App-Image-2026-05-21-at-4-04-39-PM-(2).jpg" alt="ফারুক টেলিকম দোকান">
+    </div>
+
+    <div class="admin-panel-box" id="adminPanel">
+        <h3>নতুন পণ্য যুক্ত করুন (অ্যাডমিন মোড)</h3>
+        <div class="form-group">
+            <label>পণ্যের নাম:</label>
+            <input type="text" id="pName" placeholder="যেমন: 45W SHAHI Charger">
+        </div>
+        <div class="form-group">
+            <label>সার্চ ট্যাগ (বাংলায় ও ইংরেজিতে কমা দিয়ে লিখুন):</label>
+            <input type="text" id="pTags" placeholder="যেমন: চার্জার, ফাস্ট, charger, fast">
+        </div>
+        <div class="form-group">
+            <label>ক্যাটাগরি সিলেক্ট করুন:</label>
+            <select id="pCategory">
+                <option value="charger">চার্জার</option>
+                <option value="battery">ব্যাটারি</option>
+                <option value="display">ডিসপ্লে</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>ছবির লিংক (Postimg/ImgBB লিংক):</label>
+            <input type="text" id="pImg" placeholder="https://i.postimg.cc/.../image.png">
+        </div>
+        <button class="submit-btn" onclick="addNewProduct()">পণ্য যোগ করুন</button>
+        <button class="submit-btn logout-btn" onclick="logoutAdmin()">অ্যাডমিন মোড বন্ধ করুন</button>
+    </div>
+
+    <div class="search-box">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="পণ্য সার্চ করুন..." onkeyup="handleSearch()" onkeydown="if(event.key === 'Enter') event.preventDefault();">
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+        </div>
+    </div>
+
+    <div class="categories">
+        <button class="cat-btn active" id="cat-all" onclick="filterCategory('all', this)">সব পণ্য <span class="count"></span></button>
+        <button class="cat-btn" id="cat-charger" onclick="filterCategory('charger', this)">চার্জার <span class="count"></span></button>
+        <button class="cat-btn" id="cat-battery" onclick="filterCategory('battery', this)">ব্যাটারি <span class="count"></span></button>
+        <button class="cat-btn" id="cat-display" onclick="filterCategory('display', this)">ডিসপ্লে <span class="count"></span></button>
+    </div>
+
+    <div class="container">
+        <div class="product-grid" id="productGrid">
+           
+            <div id="noProductMessage">আপনার সার্চকৃত পণ্যটি খুঁজে পাওয়া যায়নি।</div>
+        </div>
+    </div>
+
+    <div id="customLightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightboxImg" alt="Zoomed Product">
+    </div>
+
+    <div class="about-section">
+        <h2>আমাদের সম্পর্কে</h2>
+        <p>ফারুক টেলিকম বিগত ১২ বছরেরও বেশি সময় ধরে সততা ও নিষ্ঠার সাথে পাইকারি মোবাইল এক্সেসরিজ ব্যবসা পরিচালনা করে আসছে। নির্ভরযোগ্য সেবা এবং অরিজিনাল পণ্য নিশ্চিত করাই আমাদের ব্যবসার মূল লক্ষ্য। আপনাদের আস্থা ও ভালোবাসাই আমাদের পথচলার শক্তি।</p>
+    </div>
+
+    <div class="floating-buttons">
+        <button onclick="scrollToTop()" class="float-btn float-top" id="scrollTopBtn" title="উপরে যান">▲</button>
+        <a href="https://wa.me/8801670669591" class="float-btn float-wa" target="_blank" aria-label="WhatsApp Chat">💬</a>
+    </div>
+
+    <div id="copyToast" class="copy-toast">📋 নম্বরটি কপি হয়েছে!</div>
+
+    <footer>
+    <h2 style="margin-bottom: 30px;">যোগাযোগের তথ্য</h2>
+    <div class="footer-content">
+        <div class="footer-box">
+            <h3>ঠিকানা</h3>
+            <p>সুবাস্তু নজরবেলি শপিং মল, ৫ম তলা, উত্তর বাড্ডা, ঢাকা।</p>
+        </div>
+        <div class="footer-box">
+            <h3>ফোন নম্বর</h3>
+            <p id="phoneNum" style="font-size: 1.4em; font-weight: bold; letter-spacing: 1px; cursor: pointer;" title="ক্লিক করে কপি করুন">+8801670669591</p>
+            <a href="tel:01670669591" class="call-link">সরাসরি কল করুন</a>
+        </div>
+        <div class="footer-box">
+            <h3>সোশ্যাল মিডিয়া</h3>
+            <div class="social-container">
+                <a href="https://www.facebook.com/faruktelecombadda/" class="social-icon" target="_blank" title="Facebook">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@faruk-telecom0" class="social-icon" target="_blank" title="YouTube">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21.582,6.186C21.434,5.573,20.935,5.075,20.322,4.927C18.642,4.5,12,4.5,12,4.5s-6.642,0-8.322,0.427 C3.065,5.075,2.566,5.573,2.418,6.186C2,7.865,2,12s0,4.135,0.418,5.814c0.148,0.613,0.647,1.111,1.26,1.259 C5.358,19.5,12,19.5,12,19.5s6.642,0,8.322-0.427c0.613-0.148,1.112-0.646,1.26-1.259C22,16.135,22,12,22,12 S22,7.865,21.582,6.186z M9.75,15.5v-7l6,3.5L9.75,15.5z"/>
+    </svg>
+</a>
+            </div>
+        </div>
+    </div>
+    <a href="https://wa.me/8801670669591" class="btn-wa" target="_blank">WhatsApp এ মেসেজ করুন</a>
+    
+    <p style="margin-top: 25px; margin-bottom: 15px;">
+        <a href="/about.html" style="color:#e67e22;text-decoration:none;margin:0 10px;">আমাদের সম্পর্কে</a> | 
+        <a href="/contact.html" style="color:#e67e22;text-decoration:none;margin:0 10px;">যোগাযোগ</a> | 
+        <a href="/privacy-policy.html" style="color:#e67e22;text-decoration:none;margin:0 10px;">Privacy Policy</a>
+    </p>
+    
+    <p style="margin-top: 15px; opacity: 0.5; user-select: none; cursor: pointer;" onclick="handleSecretClick()">© ২০২৬ ফারুক টেলিকম | সর্বস্বত্ব সংরক্ষিত</p>
+</footer>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        
+        const firebaseConfig = {
+            projectId: "faruk-telecom-e9fee",
+            authDomain: "faruk-telecom-e9fee.firebaseapp.com",
+            storageBucket: "faruk-telecom-e9fee.appspot.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const productsCollection = collection(db, "products");
+
+        window.firebaseProducts = [];
+        onSnapshot(productsCollection, (snapshot) => {
+            window.firebaseProducts = [];
+            snapshot.forEach((doc) => {
+                window.firebaseProducts.push({ id: doc.id, isOnline: true, ...doc.data() });
+            });
+            if(typeof window.combineAndRender === "function") {
+                window.combineAndRender();
+            }
+        });
+
+        window.uploadProductToFirebase = async function(name, tags, category, 
         .admin-panel-box { display: none; background: #fff; border: 2px dashed #e67e22; border-radius: 15px; padding: 25px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; text-align: left; }
         .admin-panel-box h3 { color: #1a1a2e; margin-bottom: 15px; border-bottom: 2px solid #e67e22; padding-bottom: 5px; text-align: center; }
         .form-group { margin-bottom: 15px; }
