@@ -236,7 +236,7 @@
           header { padding: 10px 5%; }
           
           .logo-text { font-size: 24px; } 
-          .logo-img { width: 40px; height: 40px; } 
+          .logo-img { width: 80px; height: 80px; }
           
           .container, .about-section, .shop-photo { padding: 15px 3%; }
           
@@ -431,8 +431,9 @@
     // Cloudinary Widget Configuration
     var myWidget = cloudinary.createUploadWidget({
         cloudName: 'dvcqjenbg',         
+        apiKey: '827265824422717',   
         uploadPreset: 'Faruk-telecom'   
-    }, (error, result) => { 
+    }, (error, result) => {
         if (!error && result && result.event === "success") { 
             console.log('Done! Here is the image info: ', result.info); 
             uploadedImageUrl = result.info.secure_url; 
