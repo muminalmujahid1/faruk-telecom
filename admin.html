@@ -40,7 +40,7 @@
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {getFirestore,collection,doc,addDoc,getDocs,updateDoc,deleteDoc,onSnapshot,serverTimestamp,setDoc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-const firebaseConfig=const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyCNB9NOh7YbfgLKG4Td48OshIvc5XlTvKM",
   authDomain: "faruk-telecom-e9fee.firebaseapp.com",
   projectId: "faruk-telecom-e9fee",
@@ -48,7 +48,7 @@ const firebaseConfig=const firebaseConfig = {
   messagingSenderId: "83272948967",
   appId: "1:83272948967:web:b5039dbacdb2d80a87d642",
   measurementId: "G-7W02YHVMDR"
-};;
+};
 const app=initializeApp(firebaseConfig),db=getFirestore(app);
 const ADMIN_PASSWORD="muminon000"; // নিজের পছন্দের পাসওয়ার্ড বসাও
 const CLOUD_NAME="dvcqjenbg",UPLOAD_PRESET="Faruk-telecom";
