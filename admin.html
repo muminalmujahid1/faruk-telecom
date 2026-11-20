@@ -50,7 +50,7 @@ const firebaseConfig=const firebaseConfig = {
   measurementId: "G-7W02YHVMDR"
 };;
 const app=initializeApp(firebaseConfig),db=getFirestore(app);
-const ADMIN_PASSWORD="CHANGE_THIS_PASSWORD"; // নিজের পছন্দের পাসওয়ার্ড বসাও
+const ADMIN_PASSWORD="muminon000"; // নিজের পছন্দের পাসওয়ার্ড বসাও
 const CLOUD_NAME="dvcqjenbg",UPLOAD_PRESET="Faruk-telecom";
 const $=id=>document.getElementById(id);let products=[],orders=[],ads=[];
 $('loginForm').onsubmit=e=>{e.preventDefault();if($('adminPassword').value===ADMIN_PASSWORD){sessionStorage.setItem('ft_admin_demo','1');$('loginScreen').style.display='none';$('app').style.display='block';loadData()}else $('loginMsg').textContent='পাসওয়ার্ড সঠিক নয়।'};
