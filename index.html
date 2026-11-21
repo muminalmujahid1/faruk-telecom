@@ -303,6 +303,23 @@ footer{background:var(--blue-deep);color:#d4e4f9;padding:44px 0 24px}
 .d-wa{display:block;text-align:center;color:#0a7a50;background:#eaf8f1;border-radius:11px;padding:10px;font-weight:700;font-size:14px;text-decoration:none;margin-top:2px}
 .d-wa:hover{background:#d9f2e6}
 
+/* product gallery */
+.d-img{align-content:center;gap:12px}
+.d-gal{position:relative;width:100%}
+.d-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-radius:12px}
+.d-track::-webkit-scrollbar{display:none}
+.d-track img{flex:0 0 100%;scroll-snap-align:center;max-height:380px;height:380px;object-fit:contain;mix-blend-mode:multiply}
+.g-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:var(--shadow-sm);font-size:26px;line-height:1;color:var(--blue-dark);display:none;place-items:center;padding-bottom:3px}
+.g-nav.prev{left:4px}.g-nav.next{right:4px}
+.d-gal.multi .g-nav{display:grid}
+.g-count{position:absolute;right:8px;bottom:8px;background:rgba(16,33,58,.72);color:#fff;font:600 12px Inter;padding:2px 10px;border-radius:20px;display:none}
+.d-gal.multi .g-count{display:block}
+.d-thumbs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.d-thumbs button{width:56px;height:56px;border-radius:10px;border:2px solid transparent;background:#fff;overflow:hidden;padding:0;opacity:.7;transition:.2s}
+.d-thumbs button.on{border-color:var(--blue);opacity:1}
+.d-thumbs img{width:100%;height:100%;object-fit:cover}
+.pimg .gcount{position:absolute;right:10px;bottom:9px;background:rgba(16,33,58,.7);color:#fff;font:600 11px Inter;padding:1px 8px;border-radius:20px}
+
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);background:#10213a;color:#fff;padding:11px 20px;border-radius:30px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:100;box-shadow:var(--shadow);white-space:nowrap}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -323,7 +340,9 @@ footer{background:var(--blue-deep);color:#d4e4f9;padding:44px 0 24px}
 @media(max-width:700px){
   .d-grid{grid-template-columns:1fr}
   .d-img{min-height:230px}
-  .d-img img{max-height:240px}
+  .d-img{padding:16px 14px 12px}
+  .d-track img{height:270px;max-height:270px}
+  .g-nav{width:34px;height:34px}
 }
 @media(max-width:620px){
   body{padding-bottom:74px}
@@ -486,7 +505,16 @@ footer{background:var(--blue-deep);color:#d4e4f9;padding:44px 0 24px}
   <div class="modal detail">
     <button class="x dx" data-close="detailOverlay" aria-label="বন্ধ করুন">×</button>
     <div class="d-grid">
-      <div class="d-img"><img id="dImg" alt=""><span id="dNoImg" style="font-size:70px;display:none">📦</span></div>
+      <div class="d-img">
+        <div class="d-gal">
+          <div class="d-track" id="dTrack"></div>
+          <button class="g-nav prev" id="dPrev" aria-label="আগের ছবি">‹</button>
+          <button class="g-nav next" id="dNext" aria-label="পরের ছবি">›</button>
+          <span class="g-count" id="dCount"></span>
+        </div>
+        <div class="d-thumbs" id="dThumbs"></div>
+        <span id="dNoImg" style="font-size:70px;display:none">📦</span>
+      </div>
       <div class="d-info">
         <span class="d-cat" id="dCat"></span>
         <h2 id="dName"></h2>
@@ -586,6 +614,7 @@ let welcomeDone = false, floatAdData = null, floatClosed = false;
 
 const money = n => '৳' + Number(n || 0).toLocaleString('en-US');
 const safe = (v = '') => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const imgsOf = p => Array.isArray(p.productImages) && p.productImages.length ? p.productImages.filter(Boolean) : (p.productImage ? [p.productImage] : []);
 const pname = p => p.productName || p.name || 'পণ্য';
 const productPrice = p => Number(p.productPrice ?? p.price ?? 0);
 const isOut = p => {const s = Number(p.stock ?? p.quantity ?? 99); return p.inStock === false || p.stockStatus === 'out' || s <= 0};
@@ -641,7 +670,8 @@ function renderProducts() {
     const off = old > price && price ? Math.round((old - price) / old * 100) : 0;
     return `<article class="product">
       <div class="pimg" data-open="${id}">
-        ${p.productImage ? `<img loading="lazy" src="${safe(p.productImage)}" alt="${safe(pname(p))}">` : '<span style="font-size:46px">📦</span>'}
+        ${imgsOf(p)[0] ? `<img loading="lazy" src="${safe(imgsOf(p)[0])}" alt="${safe(pname(p))}">` : '<span style="font-size:46px">📦</span>'}
+        ${imgsOf(p).length > 1 ? `<span class="gcount">▣ ${imgsOf(p).length}</span>` : ''}
         <span class="tag">${safe(p.productCategory || 'পণ্য')}</span>
         ${off ? `<span class="sale">-${off}%</span>` : ''}
         ${out ? '<div class="soldout"><span>স্টক শেষ</span></div>' : ''}
@@ -681,13 +711,32 @@ function renderCategories() {
 }
 
 /* ---------- product detail ---------- */
-let dId = null, dQty = 1;
+let dId = null, dQty = 1, gImgs = [];
+function setGallery(imgs, name) {
+  gImgs = imgs;
+  $('dNoImg').style.display = imgs.length ? 'none' : 'block';
+  $('dTrack').style.display = imgs.length ? 'flex' : 'none';
+  $('dTrack').innerHTML = imgs.map((u, i) => `<img src="${safe(u)}" alt="${safe(name)} ${i + 1}" ${i ? 'loading="lazy"' : ''}>`).join('');
+  $('dTrack').scrollLeft = 0;
+  $('dThumbs').innerHTML = imgs.length > 1 ? imgs.map((u, i) => `<button type="button" data-g="${i}" aria-label="ছবি ${i + 1}"><img src="${safe(u)}" alt=""></button>`).join('') : '';
+  document.querySelector('.d-gal').classList.toggle('multi', imgs.length > 1);
+  gMark(0);
+}
+function gMark(i) {
+  $('dCount').textContent = `${i + 1}/${gImgs.length}`;
+  document.querySelectorAll('#dThumbs button').forEach((b, k) => b.classList.toggle('on', k === i));
+}
+function gGo(i) {const t = $('dTrack'); i = (i + gImgs.length) % gImgs.length; t.scrollTo({left: i * t.clientWidth, behavior: 'smooth'}); gMark(i)}
+const gIdx = () => {const t = $('dTrack'); return Math.round(t.scrollLeft / (t.clientWidth || 1))};
+$('dTrack').addEventListener('scroll', () => gMark(Math.min(gImgs.length - 1, Math.max(0, gIdx()))), {passive: true});
+$('dPrev').onclick = () => gGo(gIdx() - 1);
+$('dNext').onclick = () => gGo(gIdx() + 1);
+$('dThumbs').addEventListener('click', e => {const b = e.target.closest('[data-g]'); if (b) gGo(+b.dataset.g)});
 function openDetail(id) {
   const p = products.find(x => x.id === id); if (!p) return;
   dId = id; dQty = 1;
   const price = productPrice(p), old = Number(p.oldPrice || 0), out = isOut(p);
-  $('dImg').style.display = p.productImage ? 'block' : 'none'; $('dNoImg').style.display = p.productImage ? 'none' : 'block';
-  $('dImg').src = p.productImage || ''; $('dImg').alt = pname(p);
+  setGallery(imgsOf(p), pname(p));
   $('dCat').textContent = p.productCategory || 'পণ্য';
   $('dName').textContent = pname(p);
   $('dPrice').textContent = price ? money(price) : 'দাম জানতে যোগাযোগ করুন';
@@ -718,7 +767,7 @@ function renderCart() {
   $('cartLines').innerHTML = cart.length ? cart.map(x => {
     const p = products.find(y => y.id === x.id) || {};
     return `<div class="cartline">
-      <img src="${p.productImage ? safe(p.productImage) : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='}" alt="">
+      <img src="${imgsOf(p)[0] ? safe(imgsOf(p)[0]) : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='}" alt="">
       <div class="ci2"><b>${safe(pname(p))}</b><small>${money(productPrice(p))} × ${x.qty}</small>
         <div class="qty"><button data-dec="${safe(x.id)}">−</button>${x.qty}<button data-inc="${safe(x.id)}">+</button><button class="del" data-del="${safe(x.id)}" aria-label="মুছুন">🗑</button></div>
       </div></div>`;
@@ -751,7 +800,7 @@ $('checkoutForm').onsubmit = async e => {
   e.preventDefault();
   if (!cart.length) return;
   const f = new FormData(e.target);
-  const items = cart.map(x => {const p = products.find(y => y.id === x.id) || {}; return {productId: x.id, name: pname(p), image: p.productImage || '', price: productPrice(p), quantity: x.qty}});
+  const items = cart.map(x => {const p = products.find(y => y.id === x.id) || {}; return {productId: x.id, name: pname(p), image: imgsOf(p)[0] || '', price: productPrice(p), quantity: x.qty}});
   const total = items.reduce((s, x) => s + x.price * x.quantity, 0);
   const msg = $('checkoutMsg'), btn = $('placeBtn');
   btn.disabled = true; msg.style.color = '#5a6b82'; msg.textContent = 'অর্ডার পাঠানো হচ্ছে...';
